@@ -1,0 +1,40 @@
+{
+  "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
+  },
+  "devDependencies": {
+    "bootstrap-sass": "^3.0.0",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-js-minify": "0.0.3",
+    "gulp-sync": "^0.1.4"
+  },
+  "dependencies": {
+    "angular": "^1.5.8",
+    "angular-route": "^1.5.8",
+    "bootstrap": "^3.3.7",
+    "del": "^2.2.2",
+    "express": "^4.14.0",
+    "font-awesome": "^4.7.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-js-minify": "0.0.3",
+    "gulp-notify": "^2.2.0",
+    "gulp-prompt": "^0.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sequence": "^0.4.6",
+    "gulp-sourcemap": "^1.0.1",
+    "gulp-sync": "^0.1.4",
+    "gulp-watch": "^4.3.10",
+    "ng-flow": "^2.1.4",
+    "satellizer": "^0.15.5",
+    "socket.io": "^1.5.1",
+    "string-to-stream": "^1.1.0",
+    "uglify-js": "^2.7.4",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

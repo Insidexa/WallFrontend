@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-md-12">
+        <label for="text">Text</label>
+        <textarea ng-model="wall.wall.text" placeholder="Enter text" class="form-control" id="text" rows="3"></textarea>
+    </div>
+    <div class="col-md-12">
+        <div flow-init
+             flow-object="wall.flowObject"
+             flow-file-added="wall.filesAdded($file, $flow)">
+            <div class="row">
+                <div class="col-md-12">
+                    <button type="button" class="btn" flow-btn>Upload File</button>
+                </div>
+                <div class="col-md-12">
+                    <div ng-repeat="file in $flow.files" class="gallery-box">
+                        <span class="title">{{file.name}}</span>
+                        <div class="thumbnail" ng-show="$flow.files.length">
+                            <img flow-img="file" src="">
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-xs btn-danger" ng-click="file.cancel()">Remove</a>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-repeat="img in $flow.files">
+                <img flow-img="$flow.img" />
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-12">
+        <button ng-click="wall.add()" type="button" class="btn btn-primary btn-sm btn-block">Add post</button>
+    </div>
+</div>

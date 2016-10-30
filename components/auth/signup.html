@@ -1,0 +1,15 @@
+<form ng-submit="signup.signup()">
+    <div class="form-group">
+        <label for="exampleInputName">Name</label>
+        <input ng-model="signup.user.name" type="email" class="form-control" id="exampleInputName" placeholder="Name">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputEmail">Email address</label>
+        <input ng-model="signup.user.email" type="email" class="form-control" id="exampleInputEmail" placeholder="Email">
+    </div>
+    <div class="form-group">
+        <label for="exampleInputPassword">Password</label>
+        <input ng-model="signup.user.password" type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>

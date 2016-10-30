@@ -1,0 +1,51 @@
+.app-size {
+    width: 700px;
+}
+
+.wall-add {
+    padding-bottom: 50px;
+}
+
+.actions {
+    position: relative;
+}
+
+.btn-action {
+    cursor: pointer;
+}
+
+.like {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.fa-remove {
+    color: #ff182a;
+}
+
+.gallery-box {
+    width: 200px;
+    padding: 5px;
+    margin: 7px;
+    float: left;
+    min-height: 200px;
+    border: 1px solid #ddd;
+    overflow: hidden;
+}
+
+.gallery-box .title {
+    height: 22px;
+    overflow: hidden;
+    display: block;
+}
+
+.gallery-box .thumbnail {
+    height: 188px;
+    width: 188px;
+}
+
+.thumbnail img {
+    max-width: 200px;
+    max-height: 150px;
+}
