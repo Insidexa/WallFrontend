@@ -2,17 +2,27 @@
     <div class="wall-add col-md-12">
         <wall-add></wall-add>
     </div>
-    <div ng-repeat="post in wall.walls track by $index" class="row">
+    <div class="col-md-offset-10 col-md-2">
+        <i ng-click="wall.sortBy('created_at')"
+           class="btn-action fa fa-calendar-o fa-2x" aria-hidden="true"></i>
+        <i ng-click="wall.sortBy('likes')"
+           class="btn-action fa fa-sort fa-2x" ng-class="sizeIcon" aria-hidden="true"></i>
+    </div>
+    <div ng-repeat="post in wall.walls track by $index"
+         ng-init="wallIndex = $index"
+         class="post row">
         <div class="col-md-12">
-            <div class="row">
+            <div class="content row">
                 <div class="col-md-9">
                     <h4>{{post.user.name}} - {{post.created_at}}</h4>
                 </div>
                 <div class="actions col-md-3">
                     <div ng-init="sizeIcon = 'fa-2x';" class="like">
-                        <i ng-click="wall.noInteresting($index)" ng-if="post.user.id == 1" class="btn-action fa fa-bullhorn fa-2x" aria-hidden="true"></i>
-                        <i ng-click="wall.edit($index)" ng-if="post.user.id == 1" class="btn-action fa fa-edit fa-2x" aria-hidden="true"></i>
-                        <i ng-click="wall.remove($index)" ng-if="post.user.id == 1"
+                        <i ng-click="wall.noInteresting(wallIndex)" ng-if="post.user.id == 1"
+                           class="btn-action fa fa-bullhorn fa-2x" aria-hidden="true"></i>
+                        <i ng-click="wall.edit(wallIndex)" ng-if="post.user.id == 1"
+                           class="btn-action fa fa-edit fa-2x" aria-hidden="true"></i>
+                        <i ng-click="wall.remove(wallIndex)" ng-if="post.user.id == 1"
                            class="btn-action fa fa-remove fa-2x" aria-hidden="true"></i>
                         <i ng-click="wall.like(post.id, 'wall')"
                            ng-if="sizeIcon = post.is_liked == true ? 'fa-3x' : 'fa-2x'"
@@ -22,34 +32,24 @@
                 </div>
             </div>
         </div>
+        <post-content post="post" image-base-path="wall.server"></post-content>
         <div class="col-md-12">
             <div class="row">
-                <div class="content col-md-12">{{post.text}}</div>
-                <div class="images col-md-12">
-                    <div class="row">
-                        <div ng-repeat="image in post.images" class="col-xs-8 col-md-4">
-                            <a href="#" class="thumbnail">
-                                <img src="{{wall.server + image.path}}">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="row">
-                <div ng-repeat="comment in post.comments" ng-init="sizeIcon = 'fa-1x';" class="col-md-offset-1 col-md-11">
-                    <div class="row">
+                <div ng-repeat="comment in post.comments track by $index"
+                     ng-init="sizeIcon = 'fa-1x'; indexComment = $index"
+                     class="comment col-md-offset-1 col-md-11">
+                    <div ng-init="showActionsComment = false" class="row">
                         <div class="col-md-12">{{comment.user.name}}User name</div>
                         <div class="col-md-12">
-                            <div style="height: 50px" class="row">
+                            <div class="row">
                                 <div class="col-md-9">{{comment.text}}</div>
                                 <div class="actions col-md-3">
                                     <div class="like">
-                                        <i ng-click="wall.reply(1)" class="fa fa-reply fa-1x"></i>
-                                        <i ng-click="wall.edit($index)" ng-if="comment.user.id == 1" class="btn-action fa fa-edit fa-2x" aria-hidden="true"></i>
-                                        <i ng-click="wall.remove($index)" ng-if="comment.user.id == 1"
-                                           class="btn-action fa fa-remove fa-2x" aria-hidden="true"></i>
+                                        <i ng-click="showFormAddComment = true; wall.reply(1)" class="fa fa-reply fa-1x"></i>
+                                        <i ng-click="showActionsComment = !showActionsComment; wall.editCommentForm(wallIndex, indexComment)"
+                                           class="btn-action fa fa-edit fa-1x" aria-hidden="true"></i>
+                                        <i ng-click="wall.removeComment(wallIndex, indexComment)"
+                                           class="btn-action fa fa-remove fa-1x" aria-hidden="true"></i>
                                         <i ng-click="wall.like(comment.id, 'comment', post.id)"
                                            ng-if="sizeIcon = comment.is_liked == true ? 'fa-2x' : 'fa-1x'"
                                            class="btn-action fa fa-heart " ng-class="sizeIcon" aria-hidden="true"></i>
@@ -58,13 +58,17 @@
                                 </div>
                             </div>
                         </div>
+                        <edit-comment comment-show="showActionsComment" callback="wall.updateComment" comment="comment"></edit-comment>
                     </div>
                 </div>
-                <div class="add-comment col-md-offset-1 col-md-11">
-                    <textarea ng-model="wall.comment.text" class="form-control" rows="3"></textarea>
-                    <button ng-click="wall.addComment(post.id)" type="AuthorReplybutton"
-                            class="btn btn-primary btn-sm btn-block">Add comment
-                    </button>
+                <div ng-init="showActionsComment = false" class="col-md-12">
+                    <button ng-click="showActionsComment = !showActionsComment" type="button"
+                            class="btn btn-default btn-sm btn-block">add comment</button>
+                </div>
+                <div ng-if="showActionsComment" class="add-comment col-md-offset-1 col-md-11">
+                    <textarea ng-model="text" class="form-control" rows="1"></textarea>
+                    <button ng-click="wall.addComment(post.id, text); showActionsComment = false" type="button"
+                            class="btn btn-primary btn-sm btn-block">add</button>
                 </div>
             </div>
         </div>
