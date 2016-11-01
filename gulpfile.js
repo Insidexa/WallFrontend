@@ -20,6 +20,7 @@ gulp.task('angular-vendor', function () {
         node_modules + 'angular/angular.min.js',
         node_modules + 'angular-route/angular-route.min.js',
         node_modules + 'satellizer/dist/satellizer.min.js',
+        node_modules + 'angular-auto-validate/dist/jcs-auto-validate.min.js'
         //node_modules + 'ng-flow/dist/ng-flow-standalone.min.js'
     ])
         .pipe(concat('angular-vendor.js'))

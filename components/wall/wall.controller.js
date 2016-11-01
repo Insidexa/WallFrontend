@@ -1,16 +1,12 @@
 
-WallController.$inject = ['$scope', 'WSFactory', '$timeout', 'orderByFilter', '$interval'];
-function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
+WallController.$inject = ['WSFactory', '$timeout', 'orderByFilter', '$interval'];
+function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     var vm = this;
 
-    vm.wall = {
-        images: []
-    };
+    vm.wall = {images: []};
+    vm.editWall = {images: []};
     vm.walls = [];
     vm.server = SERVER_URL;
-    vm.flowObject = {
-        files: []
-    };
     vm.reverse = true;
     vm.propertyName = 'created_at';
 
@@ -18,10 +14,11 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
     vm.addImage = addImage;
     vm.removeImage = removeImage;
     vm.add = add;
+    vm.update = update;
     vm.addComment = addComment;
     vm.reply = reply;
     vm.remove = remove;
-    vm.edit = edit;
+    vm.editWallForm = editWallForm;
     vm.like = like;
     vm.noInteresting = noInteresting;
     vm.sortBy = sortBy;
@@ -59,11 +56,11 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
             action: 'user_update_comment',
             comment: comment
         });
+        vm.comment = null;
     }
 
     function sortBy(propertyName) {
-        vm.reverse = (propertyName !== null && vm.propertyName === propertyName)
-            ? !vm.reverse : false;
+        vm.reverse = (propertyName !== null && vm.propertyName === propertyName) ? !vm.reverse : false;
         vm.propertyName = propertyName;
         vm.walls = orderByFilter(vm.walls, vm.propertyName, vm.reverse);
     }
@@ -100,6 +97,13 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
             },
             'client_remove_wall': function (response) {
                 vm.walls.splice(response, 1);
+            },
+            'client_update_wall': function(response) {
+                angular.forEach(vm.walls, function (wall, index) {
+                    if (wall.id === response.id) {
+                        vm.walls[index] = response;
+                    }
+                });
             },
             'client_like_wall': function (response) {
                 angular.forEach(vm.walls, function (wall) {
@@ -168,8 +172,8 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
         } else throw new Error('Undeclared route: ', data.action);
     }
 
-    function edit(index) {
-        vm.wall = vm.walls[index];
+    function editWallForm(index) {
+        vm.editWall = vm.walls[index];
     }
     
     function remove(index) {
@@ -181,6 +185,7 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
     }
 
     function reply(commentId) {
+        vm.comment = {};
         vm.comment.parent_id = commentId;
     }
     
@@ -195,6 +200,19 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
         });
     }
 
+    function update() {
+        WSFactory.send({
+            action: 'user_update_wall',
+            wall: {
+                id: vm.editWall.id,
+                text: vm.editWall.text,
+                removeImages: vm.editWall.removeImages,
+                images: vm.editWall.images
+            }
+        });
+        vm.editWall = {images: []};
+    }
+
     function add() {
         WSFactory.send({
             action: 'user_add_wall',
@@ -203,18 +221,19 @@ function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
         vm.wall = {images: []};
     }
 
-    function removeImage(index) {
-        vm.wall.images.splice(index, 1);
+    function removeImage(index, type) {
+        if (type === 'editWall') {
+            if (!vm[type].removeImages) vm[type].removeImages = [];
+            if (vm[type].images[index].path)
+                vm[type].removeImages.push(vm[type].images[index].id);
+        }
+
+        vm[type].images.splice(index, 1);
     }
 
-    function addImage(file) {
-        if (vm.wall.images.length > MAX_COUNT_IMAGES) {
-            alert('No more 5 files');
-            vm.wall.images.splice(MAX_COUNT_IMAGES, vm.wall.images.length - MAX_COUNT_IMAGES);
-        } else {
-            vm.wall.images.push({
-                image: file
-            });
-        }
+    function addImage(file, type) {
+        vm[type].images.push({
+            image: file
+        });
     }
 }

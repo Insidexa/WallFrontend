@@ -1,9 +1,13 @@
 <div class="row">
-    <div class="col-md-12">
-        <label for="text">Text</label>
-        <textarea ng-model="wall.wall.text" placeholder="Enter text" class="form-control" id="text" rows="3"></textarea>
-    </div>
-    <div class="col-md-12">
+    <form ng-submit="wall.add();" name="wallAdd" novalidate="novalidate" >
+        <div class="form-group col-md-12">
+            <textarea ng-model="wall.wall.text" placeholder="Enter text"
+                      ng-minlength="1"
+                      required
+                      class="form-control" rows="3">
+            </textarea>
+        </div>
+        <div class="col-md-12">
             <div class="row">
                 <div class="col-md-12">
                     <upload-image image-callback="wall.addImage"></upload-image>
@@ -14,14 +18,15 @@
                             <img ng-src="{{image.image}}">
                         </div>
                         <div class="btn-group">
-                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index)">Remove</a>
+                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index, 'wall')">Remove</a>
                         </div>
                         <div class="clear"></div>
                     </div>
                 </div>
             </div>
-    </div>
-    <div class="col-md-12">
-        <button ng-click="wall.add();" type="button" class="btn btn-primary btn-sm btn-block">Add post</button>
-    </div>
+        </div>
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary btn-sm btn-block">Add post</button>
+        </div>
+    </form>
 </div>

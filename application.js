@@ -6,11 +6,18 @@ MAX_COUNT_IMAGES = 5;
 angular.module('App', [
     'satellizer',
     'ngRoute',
+    'jcs-autoValidate',
 
     'Wall',
     'Auth'
 ])
     .config(ConfigApp)
+    .run(['bootstrap3ElementModifier', 'validator',
+        function (bootstrap3ElementModifier, validator) {
+            validator.defaultFormValidationOptions.waitForAsyncValidators = false;
+            validator.defaultFormValidationOptions.validateOnFormSubmit = true;
+        bootstrap3ElementModifier.enableValidationStateIcons(true);
+    }])
     .factory('LS', function () {
         var factory = {};
 
@@ -100,7 +107,8 @@ angular.module('App', [
             restrict: 'E',
             template: '<input onchange="angular.element(this).scope().onLoadImage(this)" type="file" multiple="multiple" >',
             scope: {
-                imageCallback: '=imageCallback'
+                imageCallback: '=imageCallback',
+                edit: '=?'
             },
             controller: ['$scope', function ($scope) {
                 $scope.onLoadImage = onLoadImage;
@@ -114,7 +122,9 @@ angular.module('App', [
                                 var reader = new FileReader();
                                 reader.readAsDataURL(file);
                                 reader.onload = function (e) {
-                                    $scope.imageCallback(e.target.result);
+                                    if (!$scope.edit)
+                                        $scope.edit = 'wall';
+                                    $scope.imageCallback(e.target.result, $scope.edit);
                                 };
                             });
                         }

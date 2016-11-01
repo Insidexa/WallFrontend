@@ -16,24 +16,40 @@ angular.module('Wall', [])
             templateUrl: 'components/wall/add.html'
         }
     })
+    .directive('editPost', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            templateUrl: 'components/wall/edit.html'
+        }
+    })
     .directive('editComment', function () {
         return {
             restrict: 'E',
             template:  '<div ng-show="commentShow" class="col-md-offset-1 col-md-11">'  +
-            '     <textarea ng-model="editComment.text" class="form-control" rows="1"></textarea>'  +
-            '     <button ng-click="update()" type="button"'  +
+            '<form ng-submit="update()" name="editCommentForm" novalidate="novalidate">' +
+            '<div class="form-group"><textarea ng-model="editComment.text" class="form-control" ' +
+            'ng-minlength="1" required rows="1"></textarea></div>'  +
+            '     <button type="submit"'  +
             '     class="btn btn-primary btn-sm">update</button>'  +
-            '  <button ng-click="commentShow = false" class="btn btn-primary btn-sm ">cancel</button>'  +
-            '</div>' ,
+            '  <button ng-click="cancel()" class="btn btn-primary btn-sm ">cancel</button>'  +
+            '</form></div>' ,
             scope: {
                 comment: '=',
                 callback: '=',
                 commentShow: '=commentShow'
             },
             controller: ['$scope', function ($scope) {
-                $scope.update = update;
                 $scope.editComment = angular.copy($scope.comment);
-                
+
+                $scope.update = update;
+                $scope.cancel = cancel;
+
+                function cancel() {
+                    $scope.commentShow = false;
+                    $scope.callback($scope.comment);
+                }
+
                 function update() {
                     $scope.commentShow = false;
                     $scope.callback($scope.editComment);

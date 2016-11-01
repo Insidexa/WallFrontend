@@ -21,6 +21,10 @@
     padding: 2px;
 }
 
+.comment {
+    min-height: 50px;
+}
+
 .actions {
     position: relative;
 }

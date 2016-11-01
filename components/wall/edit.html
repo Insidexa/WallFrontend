@@ -1,0 +1,32 @@
+<div class="row">
+    <h3>Edit</h3>
+    <form ng-submit="wall.update(); showEditWall = false" name="editWall" novalidate="novalidate">
+        <div class="form-group col-md-12">
+            <textarea ng-model="wall.editWall.text" placeholder="Enter text"
+                      ng-minlength="1" required
+                      class="form-control" rows="3"></textarea>
+        </div>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-12">
+                    <upload-image edit="'editWall'" image-callback="wall.addImage"></upload-image>
+                </div>
+                <div class="col-md-12">
+                    <div ng-repeat="image in wall.editWall.images track by $index" class="gallery-box">
+                        <div class="thumbnail">
+                            <img ng-if="image.path" ng-src="{{wall.server + image.path}}" src="{{wall.server + image.path}}">
+                            <img ng-if="image.image" ng-src="{{image.image}}">
+                        </div>
+                        <div class="btn-group">
+                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index, 'editWall')">Remove</a>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-primary btn-sm btn-block">Update post</button>
+        </div>
+    </form>
+</div>
