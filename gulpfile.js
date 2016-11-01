@@ -45,7 +45,7 @@ gulp.task('components', function () {
 
     ])
         .pipe(concat('application.js'))
-        .pipe(minifyJs())
+        //.pipe(minifyJs())
         .pipe(gulp.dest(build))
         .pipe(notify({message: 'Finished minifying app vendor JavaScript'}));
 });

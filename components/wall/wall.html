@@ -39,7 +39,7 @@
                      ng-init="sizeIcon = 'fa-1x'; indexComment = $index"
                      class="comment col-md-offset-1 col-md-11">
                     <div ng-init="showActionsComment = false" class="row">
-                        <div class="col-md-12">{{comment.user.name}}User name</div>
+                        <div class="col-md-12">{{comment.user.name}} <p ng-if="comment.time">{{comment.time}}</p></div>
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-9">{{comment.text}}</div>

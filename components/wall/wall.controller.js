@@ -1,6 +1,6 @@
 
-WallController.$inject = ['$scope', 'WSFactory', '$timeout', 'orderByFilter'];
-function WallController($scope, WSFactory, $timeout, orderByFilter) {
+WallController.$inject = ['$scope', 'WSFactory', '$timeout', 'orderByFilter', '$interval'];
+function WallController($scope, WSFactory, $timeout, orderByFilter, $interval) {
     var vm = this;
 
     vm.wall = {
@@ -15,7 +15,8 @@ function WallController($scope, WSFactory, $timeout, orderByFilter) {
     vm.propertyName = 'created_at';
 
     vm.init = init;
-    vm.filesAdded = filesAdded;
+    vm.addImage = addImage;
+    vm.removeImage = removeImage;
     vm.add = add;
     vm.addComment = addComment;
     vm.reply = reply;
@@ -27,6 +28,19 @@ function WallController($scope, WSFactory, $timeout, orderByFilter) {
     vm.editCommentForm = editCommentForm;
     vm.removeComment = removeComment;
     vm.updateComment = updateComment;
+
+    $interval(function () {
+        angular.forEach(vm.walls, function (wall) {
+            if (wall.showTimeFromEdit) {
+                wall.time = moment.preciseDiff(wall.updated_at, new Date());
+            }
+            angular.forEach(wall.comments, function (comment) {
+                if (comment.showTimeFromEdit) {
+                    comment.time = moment.preciseDiff(comment.updated_at, new Date());
+                }
+            });
+        });
+    }, 5000);
 
     function removeComment(wallIndex, commentIndex) {
         WSFactory.send({
@@ -76,78 +90,82 @@ function WallController($scope, WSFactory, $timeout, orderByFilter) {
             WSFactory.send({
                 action: 'get_walls'
             });
-        }, function (event) {
-            var routes = {
-                'client_walls': function (response) {
-                    vm.walls = response;
-                },
-                'client_remove_wall': function (response) {
-                    vm.walls.splice(response, 1);
-                },
-                'client_like_wall': function (response) {
-                    angular.forEach(vm.walls, function (wall) {
-                        if (response.type == 'wall' && response.type_id == wall.id) {
-                            wall.is_liked = response.action;
-                            wall.likes = response.count;
-                        } else if (response.type == 'comment' && response.wall_id == wall.id) {
-                            angular.forEach(wall.comments, function (comment) {
-                                if (comment.id == response.type_id) {
-                                    comment.is_liked = response.action;
-                                    comment.likes = response.count;
-                                }
-                            });
-                        }
-                    });
-                },
-                'client_add_wall': function (response) {
-                    vm.walls.push(response);
-                },
-                'client_add_comment': function (response) {
-                    angular.forEach(vm.walls, function (wall) {
-                        if (response.wall_id == wall.id) {
-                            wall.comments.push(response);
-                        }
-                    })
-                },
-                'client_no_interesting': function (response) {
-                    angular.forEach(vm.walls, function (wall, index) {
-                        if (wall.id == response) {
-                            vm.walls.splice(index, 1);
-                        }
-                    })
-                },
-                'client_remove_comment': function (response) {
-                    angular.forEach(vm.walls, function (wall, wallIndex) {
-                        if (response.wall_id == wall.id) {
-                            angular.forEach(wall.comments, function (comment, commentIndex) {
-                                if (comment.id == response.comment_id) {
-                                    vm.walls[wallIndex].comments.splice(commentIndex, 1);
-                                }
-                            });
-                        }
-                    });
-                },
-                'client_update_comment': function (response) {
-                    angular.forEach(vm.walls, function (wall, wallIndex) {
-                        if (response.wall_id == wall.id) {
-                            angular.forEach(wall.comments, function (comment, commentIndex) {
-                                if (comment.id == response.id) {
-                                    vm.walls[wallIndex].comments[commentIndex] = response;
-                                }
-                            });
-                        }
-                    });
-                }
-            };
+        }, initRouter);
+    }
 
-            var data = JSON.parse(event.data);
+    function initRouter (event) {
+        var routes = {
+            'client_walls': function (response) {
+                vm.walls = response;
+            },
+            'client_remove_wall': function (response) {
+                vm.walls.splice(response, 1);
+            },
+            'client_like_wall': function (response) {
+                angular.forEach(vm.walls, function (wall) {
+                    if (response.type == 'wall' && response.type_id == wall.id) {
+                        wall.is_liked = response.action;
+                        wall.likes = response.count;
+                    } else if (response.type == 'comment' && response.wall_id == wall.id) {
+                        angular.forEach(wall.comments, function (comment) {
+                            if (comment.id == response.type_id) {
+                                comment.is_liked = response.action;
+                                comment.likes = response.count;
+                            }
+                        });
+                    }
+                });
+            },
+            'client_add_wall': function (response) {
+                vm.walls.push(response);
+            },
+            'client_add_comment': function (response) {
+                angular.forEach(vm.walls, function (wall) {
+                    if (response.wall_id == wall.id) {
+                        wall.comments.push(response);
+                    }
+                })
+            },
+            'client_no_interesting': function (response) {
+                angular.forEach(vm.walls, function (wall, index) {
+                    if (wall.id == response) {
+                        vm.walls.splice(index, 1);
+                    }
+                })
+            },
+            'client_remove_comment': function (response) {
+                angular.forEach(vm.walls, function (wall, wallIndex) {
+                    if (response.wall_id == wall.id) {
+                        angular.forEach(wall.comments, function (comment, commentIndex) {
+                            if (comment.id == response.comment_id) {
+                                vm.walls[wallIndex].comments.splice(commentIndex, 1);
+                            }
+                        });
+                    }
+                });
+            },
+            'client_update_comment': function (response) {
+                angular.forEach(vm.walls, function (wall, wallIndex) {
+                    if (response.wall_id == wall.id) {
+                        angular.forEach(wall.comments, function (comment, commentIndex) {
+                            if (comment.id == response.id) {
+                                response.showTimeFromEdit = true;
+                                response.time = moment.preciseDiff(comment.updated_at, new Date());
+                                vm.walls[wallIndex].comments[commentIndex] = response;
+                            }
+                        });
+                    }
+                });
+            }
+        };
 
-            if (routes.hasOwnProperty(data.action)) {
-                $timeout(function () {
-                    routes[data.action](data.response);
-                }, 0);
-            } else throw new Error('Undeclared route: ', data.action);
-        });
+        var data = JSON.parse(event.data);
+
+        if (routes.hasOwnProperty(data.action)) {
+            $timeout(function () {
+                routes[data.action](data.response);
+            }, 0);
+        } else throw new Error('Undeclared route: ', data.action);
     }
 
     function edit(index) {
@@ -185,22 +203,18 @@ function WallController($scope, WSFactory, $timeout, orderByFilter) {
         vm.wall = {images: []};
     }
 
-    function filesAdded($file, $flow) {
-        console.log($flow);
-        if (vm.wall.images.length > 5) {
+    function removeImage(index) {
+        vm.wall.images.splice(index, 1);
+    }
+
+    function addImage(file) {
+        if (vm.wall.images.length > MAX_COUNT_IMAGES) {
             alert('No more 5 files');
-            $file.cancel();
+            vm.wall.images.splice(MAX_COUNT_IMAGES, vm.wall.images.length - MAX_COUNT_IMAGES);
         } else {
-            var fileReader = new FileReader();
-            fileReader.readAsDataURL($file.file);
-            fileReader.onload = function (event) {
-                $scope.$apply(function () {
-                    vm.wall.images.push({
-                        type: $file.file.type.split('/')[1],
-                        image: event.target.result
-                    });
-                });
-            };
+            vm.wall.images.push({
+                image: file
+            });
         }
     }
 }
