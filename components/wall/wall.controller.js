@@ -73,7 +73,7 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
 
     function init() {
         WallService.getWalls().then(function (response) {
-            vm.walls = response.walls;
+            vm.walls = response.walls || [];
         });
 
         var routes = {

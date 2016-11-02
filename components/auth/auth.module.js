@@ -28,19 +28,27 @@ function SignController($auth, LS, $location) {
 
     vm.signin = signin;
     vm.signup = signup;
+    vm.setInfo = setInfo;
+
+    if ($auth.isAuthenticated()) {
+        $location.path(ROOT_PATH);
+    }
+
+    function setInfo(data) {
+        LS.set('user', data.user);
+        $auth.setToken(data.token);
+        $location.path(ROOT_PATH);
+    }
 
     function signup() {
         $auth.signup(vm.user).then(function (response) {
-            console.log(response);
-            //vm.signin();
+            vm.setInfo(response.data);
         });
     }
 
     function signin() {
         $auth.login(vm.user).then(function (response) {
-            LS.set('user', response.data.user);
-            $auth.setToken(response.data.token);
-            $location.path(ROOT_PATH);
+            vm.setInfo(response.data);
         });
     }
 }

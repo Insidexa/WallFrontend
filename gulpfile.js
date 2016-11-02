@@ -1,7 +1,6 @@
 var gulp = require('gulp'),
     concat = require('gulp-concat'),
     rename = require('gulp-rename'),
-    minifyJs = require('gulp-js-minify'),
     notify = require("gulp-notify"),
     watch = require('gulp-watch'),
     prompt = require('gulp-prompt'),
@@ -37,13 +36,10 @@ gulp.task('components', function () {
         components + 'wall/wall.controller.js',
         components + 'wall/wall.module.js',
         
-        'web-socket.factory.js',
-        
         'application.js'
 
     ])
         .pipe(concat('application.js'))
-        //.pipe(minifyJs())
         .pipe(gulp.dest(build))
         .pipe(notify({message: 'Finished minifying app vendor JavaScript'}));
 });

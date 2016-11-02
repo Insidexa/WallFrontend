@@ -106,7 +106,7 @@ angular.module('App', [
 
                 function onLoadImage(input) {
                     if (input.files && input.files[0]) {
-                        if (input.files.length > 5) {
+                        if (input.files.length > MAX_COUNT_IMAGES) {
                             alert('max ' + MAX_COUNT_IMAGES + ' files');
                         } else {
                             angular.forEach(input.files, function (file) {

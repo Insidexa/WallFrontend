@@ -6,6 +6,10 @@
     padding-bottom: 50px;
 }
 
+.wall-form {
+    margin-bottom: 15px;
+}
+
 .post {
     border: 1px solid #00b3ee;
     border-radius: 2px;
@@ -23,10 +27,12 @@
 
 .comment {
     min-height: 50px;
+    border-left: 1px solid blue;
+    margin-bottom: 10px;
 }
 
-.actions {
-    position: relative;
+.comment-text {
+    margin: 0;
 }
 
 .btn-action {
@@ -68,7 +74,6 @@
     width: 188px;
 }
 
-.thumbnail img {
-    max-width: 200px;
-    max-height: 150px;
+.form-group {
+    margin-bottom: 7px;
 }

@@ -63,16 +63,14 @@ angular.module('Wall', [])
             restrict: 'E',
             template: '<div class="col-md-12">' +
             '     <div class="row">' +
-            '         <div class="text col-md-12">{{post.text}}</div>' +
-            '         <div class="images col-md-12">' +
-            '             <div class="row">' +
+            '         <div class="col-md-12">{{post.text}}</div>' +
+            '             <div style="margin-left: 0" class="row">' +
             '                 <div ng-repeat="image in post.images" class="col-xs-8 col-md-4">' +
             '                     <a class="thumbnail">' +
             '                         <img src="{{imageBasePath + image.path}}">' +
             '                     </a>' +
             '                 </div>' +
             '             </div>' +
-            '         </div>' +
             '     </div>' +
             '</div>',
             scope: {

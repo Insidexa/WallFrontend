@@ -1,22 +1,24 @@
 <div ng-init="wall.init()">
-    <div class="wall-add col-md-12">
-        <wall-add></wall-add>
+    <wall-add></wall-add>
+
+    <div class="row sort">
+        <div ng-if="wall.walls.length > 0" class="col-md-12">
+            <i ng-click="wall.sortBy('created_at')"
+               class="btn-action fa fa-calendar-o fa-2x" aria-hidden="true"></i>
+            <i ng-click="wall.sortBy('likes')"
+               class="btn-action fa fa-sort fa-2x" ng-class="sizeIcon" aria-hidden="true"></i>
+        </div>
     </div>
-    <div ng-if="wall.walls.length > 0" class="col-md-offset-10 col-md-2">
-        <i ng-click="wall.sortBy('created_at')"
-           class="btn-action fa fa-calendar-o fa-2x" aria-hidden="true"></i>
-        <i ng-click="wall.sortBy('likes')"
-           class="btn-action fa fa-sort fa-2x" ng-class="sizeIcon" aria-hidden="true"></i>
-    </div>
+
     <div ng-repeat="post in wall.walls track by $index"
          ng-init="showEditWall = false"
          class="post row">
         <div ng-init="wallIndex = $index" class="col-md-12">
             <div class="content row">
-                <div class="col-md-9">
+                <div class="col-md-9 col-xs-9">
                     <h4>{{post.user.name}} - {{post.created_at}}</h4>
                 </div>
-                <div class="actions col-md-3">
+                <div class="col-md-3 col-xs-3">
                     <div ng-init="sizeIcon = 'fa-2x';" class="like">
                         <i ng-click="wall.noInteresting(wallIndex)" ng-if="post.user.id == wall.user.id"
                            class="btn-action fa fa-bullhorn fa-2x" aria-hidden="true"></i>
@@ -43,11 +45,11 @@
                         <div class="col-md-12">{{comment.user.name}}</div>
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-9">
+                                <div class="col-md-9 col-xs-9">
                                     <edit-comment comment-show="showActionsComment" callback="wall.updateComment" comment="comment"></edit-comment>
-                                    <h4 ng-hide="showActionsComment">{{comment.text}}</h4>
+                                    <h4 class="comment-text" ng-hide="showActionsComment">{{comment.text}}</h4>
                                     <p ng-if="comment.time">edited {{comment.time}}</p></div>
-                                <div class="actions col-md-3">
+                                <div class="actions col-md-3 col-xs-3">
                                     <div class="like">
                                         <i ng-click="showFormAddComment = true; wall.reply(1)" class="fa fa-reply fa-1x"></i>
                                         <i ng-show="comment.user.id == wall.user.id" ng-click="showActionsComment = !showActionsComment; wall.editCommentForm(wallIndex, indexComment)"
