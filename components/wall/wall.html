@@ -10,7 +10,7 @@
         </div>
     </div>
 
-    <div ng-repeat="post in wall.walls track by $index"
+    <div ng-repeat="post in wall.walls track by $index" ng-if="post.is_no_interesting == false"
          ng-init="showEditWall = false"
          class="post row">
         <div ng-init="wallIndex = $index" class="col-md-12">

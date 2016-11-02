@@ -10,6 +10,14 @@ angular.module('Wall', [])
 
     }])
     .controller('WallController', WallController)
+    .factory('myHttpInterceptor', function () {
+        return {
+            'responseError': function(rejection) {
+                console.log(rejection);
+                return $q.reject(rejection);
+            }
+        };
+    })
     .service('AuthService', AuthService)
     .service('WallService', WallService)
     .directive('wallAdd', function () {
@@ -71,7 +79,8 @@ angular.module('Wall', [])
             '                     </a>' +
             '                 </div>' +
             '             </div>' +
-            '     </div>' +
+            '<div ng-if="post.time">{{post.time}}</div>' +
+            '        </div>' +
             '</div>',
             scope: {
                 post: '=post',
@@ -80,8 +89,10 @@ angular.module('Wall', [])
         }
     });
 
-ConfigWall.$inject = ['$routeProvider'];
-function ConfigWall($routeProvider) {
+ConfigWall.$inject = ['$routeProvider', '$httpProvider'];
+function ConfigWall($routeProvider, $httpProvider) {
+
+    $httpProvider.interceptors.push('myHttpInterceptor');
 
     $routeProvider
         .when(ROOT_PATH, {

@@ -29,11 +29,13 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
     $interval(function () {
         angular.forEach(vm.walls, function (wall) {
             if (wall.showTimeFromEdit) {
-                wall.time = moment.preciseDiff(wall.updated_at, new Date());
+                if(wall.user.id === vm.user.id)
+                    wall.time = moment(wall.updated_at).from(moment(new Date()));
             }
             angular.forEach(wall.comments, function (comment) {
                 if (comment.showTimeFromEdit) {
-                    comment.time = moment.preciseDiff(comment.updated_at, new Date());
+                    if(comment.user.id === vm.user.id)
+                        comment.time = moment(comment.updated_at).from(moment(new Date()));
                 }
             });
         });
@@ -90,6 +92,10 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
             'client_update_wall': function (response) {
                 angular.forEach(vm.walls, function (wall, index) {
                     if (wall.id === response.id) {
+                        if(wall.user.id === vm.user.id) {
+                            response.showTimeFromEdit = true;
+                            response.time = moment(wall.updated_at).from(moment(new Date()));
+                        }
                         vm.walls[index] = response;
                     }
                 });
@@ -142,8 +148,10 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
                     if (response.wall_id == wall.id) {
                         angular.forEach(wall.comments, function (comment, commentIndex) {
                             if (comment.id == response.id) {
-                                response.showTimeFromEdit = true;
-                                response.time = moment.preciseDiff(comment.updated_at, new Date());
+                                if (comment.user.id === vm.user.id) {
+                                    response.showTimeFromEdit = true;
+                                    response.time = moment(comment.updated_at).from(moment(new Date()));
+                                }
                                 vm.walls[wallIndex].comments[commentIndex] = response;
                             }
                         });
