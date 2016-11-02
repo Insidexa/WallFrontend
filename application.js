@@ -1,4 +1,4 @@
-SERVER_URL = 'http://wall-backend.jashka/';
+SERVER_URL = 'http://localhost:8000/';
 API_URL = SERVER_URL + 'api';
 ROOT_PATH = '/wall';
 MAX_COUNT_IMAGES = 5;
@@ -47,7 +47,7 @@ angular.module('App', [
 
         return factory;
     })
-    .factory('WSFactory', function () {
+    .factory('WSFactory', ['LS', function (LS) {
 
         var ws = null;
 
@@ -70,6 +70,8 @@ angular.module('App', [
             if (angular.isString(data)) {
                 processData = data;
             } else if (angular.isObject(data)) {
+                if (LS.get('satellizer_token') !== null)
+                    data.token = LS.get('satellizer_token');
                 processData = JSON.stringify(data);
             }
 
@@ -80,7 +82,7 @@ angular.module('App', [
             if (event.wasClean) {
                 console.log('Соединение закрыто чисто');
             } else {
-                console.log('Server unavailable'); // например, "убит" процесс сервера
+                console.log('Server unavailable');
             }
             console.log('Код: ' + event.code + ' причина: ' + event.reason);
         }
@@ -90,18 +92,7 @@ angular.module('App', [
             send: send,
             close: onClose
         }
-    })
-    .factory('httpRequestInterceptor', function () {
-        return {
-            request: function (config) {
-
-                //config.headers['Access-Control-Allow-Origin'] = '*';
-
-
-                return config;
-            }
-        };
-    })
+    }])
     .directive('uploadImage', function () {
         return {
             restrict: 'E',
@@ -137,7 +128,6 @@ angular.module('App', [
 ConfigApp.$inject = ['$routeProvider', '$httpProvider'];
 function ConfigApp($routeProvider, $httpProvider) {
 
-    //$httpProvider.interceptors.push('httpRequestInterceptor');
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.withCredentials = true;
     delete $httpProvider.defaults.headers.common["X-Requested-With"];

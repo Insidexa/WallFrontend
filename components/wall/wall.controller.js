@@ -1,6 +1,5 @@
-
-WallController.$inject = ['WSFactory', '$timeout', 'orderByFilter', '$interval'];
-function WallController(WSFactory, $timeout, orderByFilter, $interval) {
+WallController.$inject = ['$timeout', 'orderByFilter', '$interval', 'WallService', 'AuthService'];
+function WallController($timeout, orderByFilter, $interval, WallService, AuthService) {
     var vm = this;
 
     vm.wall = {images: []};
@@ -8,6 +7,7 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     vm.walls = [];
     vm.server = SERVER_URL;
     vm.reverse = true;
+    vm.user = AuthService.getUser();
     vm.propertyName = 'created_at';
 
     vm.init = init;
@@ -40,11 +40,7 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     }, 5000);
 
     function removeComment(wallIndex, commentIndex) {
-        WSFactory.send({
-            action: 'user_remove_comment',
-            wall_id: vm.walls[wallIndex].id,
-            comment_id: vm.walls[wallIndex].comments[commentIndex].id
-        });
+        WallService.removeComment(vm.walls[wallIndex].comments[commentIndex].id, vm.walls[wallIndex].id);
     }
 
     function editCommentForm(wallIndex, commentIndex) {
@@ -52,10 +48,7 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     }
 
     function updateComment(comment) {
-        WSFactory.send({
-            action: 'user_update_comment',
-            comment: comment
-        });
+        WallService.updateComment(comment);
         vm.comment = null;
     }
 
@@ -66,15 +59,11 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     }
 
     function noInteresting(index) {
-        WSFactory.send({
-            action: 'user_no_interesting',
-            id: vm.walls[index].id
-        });
+        WallService.noInteresting(vm.walls[index].id);
     }
 
     function like(typeId, type, wallId) {
-        WSFactory.send({
-            action: 'user_wall_like',
+        WallService.like({
             type_id: typeId,
             type: type,
             user_id: 1,
@@ -83,29 +72,39 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     }
 
     function init() {
-        WSFactory.init(function () {
-            WSFactory.send({
-                action: 'get_walls'
-            });
-        }, initRouter);
-    }
+        WallService.getWalls().then(function (response) {
+            vm.walls = response.walls;
+        });
 
-    function initRouter (event) {
         var routes = {
             'client_walls': function (response) {
                 vm.walls = response;
             },
             'client_remove_wall': function (response) {
-                vm.walls.splice(response, 1);
+                angular.forEach(vm.walls, function (wall, index) {
+                    if (wall.id == response) {
+                        vm.walls.splice(index, 1);
+                    }
+                })
             },
-            'client_update_wall': function(response) {
+            'client_update_wall': function (response) {
                 angular.forEach(vm.walls, function (wall, index) {
                     if (wall.id === response.id) {
                         vm.walls[index] = response;
                     }
                 });
             },
-            'client_like_wall': function (response) {
+            'client_add_wall': function (response) {
+                vm.walls.push(response);
+            },
+            'client_no_interesting': function (response) {
+                angular.forEach(vm.walls, function (wall, index) {
+                    if (wall.id == response) {
+                        vm.walls.splice(index, 1);
+                    }
+                })
+            },
+            'client_like': function (response) {
                 angular.forEach(vm.walls, function (wall) {
                     if (response.type == 'wall' && response.type_id == wall.id) {
                         wall.is_liked = response.action;
@@ -120,20 +119,10 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
                     }
                 });
             },
-            'client_add_wall': function (response) {
-                vm.walls.push(response);
-            },
             'client_add_comment': function (response) {
                 angular.forEach(vm.walls, function (wall) {
                     if (response.wall_id == wall.id) {
                         wall.comments.push(response);
-                    }
-                })
-            },
-            'client_no_interesting': function (response) {
-                angular.forEach(vm.walls, function (wall, index) {
-                    if (wall.id == response) {
-                        vm.walls.splice(index, 1);
                     }
                 })
             },
@@ -163,35 +152,44 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
             }
         };
 
-        var data = JSON.parse(event.data);
-
-        if (routes.hasOwnProperty(data.action)) {
-            $timeout(function () {
-                routes[data.action](data.response);
-            }, 0);
-        } else throw new Error('Undeclared route: ', data.action);
+        var conn = new ab.Session('ws://localhost:8080',
+            function () {
+                conn.subscribe('wall', function (topic, data) {
+                    var object = {};
+                    for (var key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            object[key] = data[key];
+                        }
+                    }
+                    if (routes.hasOwnProperty(object.action)) {
+                        $timeout(function () {
+                            routes[object.action](object.response);
+                        }, 0);
+                    } else throw new Error('Undeclared route: ', data.action);
+                });
+            },
+            function () {
+                console.warn('WebSocket connection closed');
+            },
+            {'skipSubprotocolCheck': true}
+        );
     }
 
     function editWallForm(index) {
         vm.editWall = vm.walls[index];
     }
-    
+
     function remove(index) {
-        WSFactory.send({
-            action: 'user_remove_wall',
-            index: index,
-            id: vm.walls[index].id
-        });
+        WallService.removeWall(vm.walls[index].id);
     }
 
     function reply(commentId) {
         vm.comment = {};
         vm.comment.parent_id = commentId;
     }
-    
+
     function addComment(id, text) {
-        WSFactory.send({
-            action: 'user_add_comment',
+        WallService.addComment({
             comment: {
                 text: text,
                 parent_id: 0
@@ -201,23 +199,17 @@ function WallController(WSFactory, $timeout, orderByFilter, $interval) {
     }
 
     function update() {
-        WSFactory.send({
-            action: 'user_update_wall',
-            wall: {
-                id: vm.editWall.id,
-                text: vm.editWall.text,
-                removeImages: vm.editWall.removeImages,
-                images: vm.editWall.images
-            }
+        WallService.updateWall({
+            id: vm.editWall.id,
+            text: vm.editWall.text,
+            removeImages: vm.editWall.removeImages,
+            images: vm.editWall.images
         });
         vm.editWall = {images: []};
     }
 
     function add() {
-        WSFactory.send({
-            action: 'user_add_wall',
-            wall: vm.wall
-        });
+        WallService.addWall(vm.wall);
         vm.wall = {images: []};
     }
 

@@ -1,15 +1,15 @@
-<form ng-submit="signup.signup()">
+<form ng-submit="sign.signup()" name="signup" novalidate="novalidate">
     <div class="form-group">
         <label for="exampleInputName">Name</label>
-        <input ng-model="signup.user.name" type="email" class="form-control" id="exampleInputName" placeholder="Name">
+        <input ng-model="sign.user.name" ng-minlength="3" required type="text" class="form-control" id="exampleInputName" placeholder="Name">
     </div>
     <div class="form-group">
         <label for="exampleInputEmail">Email address</label>
-        <input ng-model="signup.user.email" type="email" class="form-control" id="exampleInputEmail" placeholder="Email">
+        <input ng-model="sign.user.email" required type="email" class="form-control" id="exampleInputEmail" placeholder="Email">
     </div>
     <div class="form-group">
         <label for="exampleInputPassword">Password</label>
-        <input ng-model="signup.user.password" type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
+        <input ng-model="sign.user.password" ng-minlength="6" required type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
     </div>
     <button type="submit" class="btn btn-default">Submit</button>
 </form>

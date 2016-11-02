@@ -21,7 +21,6 @@ gulp.task('angular-vendor', function () {
         node_modules + 'angular-route/angular-route.min.js',
         node_modules + 'satellizer/dist/satellizer.min.js',
         node_modules + 'angular-auto-validate/dist/jcs-auto-validate.min.js'
-        //node_modules + 'ng-flow/dist/ng-flow-standalone.min.js'
     ])
         .pipe(concat('angular-vendor.js'))
         .pipe(gulp.dest(build))
@@ -32,12 +31,10 @@ gulp.task('components', function () {
     return gulp.src([
         
         components + 'auth/auth.service.js',
-        components + 'auth/signin.controller.js',
-        components + 'auth/signup.controller.js',
-
-        components + 'wall/wall.controller.js',
-        
         components + 'auth/auth.module.js',
+
+        components + 'wall/wall.service.js',
+        components + 'wall/wall.controller.js',
         components + 'wall/wall.module.js',
         
         'web-socket.factory.js',

@@ -3,14 +3,15 @@ angular.module('Wall', [])
     .run(['AuthService', '$rootScope', '$location', function (AuthService, $rootScope, $location) {
         $rootScope.$on('$routeChangeStart', function (event, next) {
             if (next.auth) {
-                //if (!AuthService.isAuth())
-                  //  $location.path('/signin');
+                if (!AuthService.isAuth())
+                    $location.path('/signin');
             }
         });
 
     }])
     .controller('WallController', WallController)
     .service('AuthService', AuthService)
+    .service('WallService', WallService)
     .directive('wallAdd', function () {
         return {
             templateUrl: 'components/wall/add.html'
@@ -26,14 +27,14 @@ angular.module('Wall', [])
     .directive('editComment', function () {
         return {
             restrict: 'E',
-            template:  '<div ng-show="commentShow" class="col-md-offset-1 col-md-11">'  +
+            template: '<div ng-show="commentShow" class="col-md-offset-1 col-md-11">' +
             '<form ng-submit="update()" name="editCommentForm" novalidate="novalidate">' +
             '<div class="form-group"><textarea ng-model="editComment.text" class="form-control" ' +
-            'ng-minlength="1" required rows="1"></textarea></div>'  +
-            '     <button type="submit"'  +
-            '     class="btn btn-primary btn-sm">update</button>'  +
-            '  <button ng-click="cancel()" class="btn btn-primary btn-sm ">cancel</button>'  +
-            '</form></div>' ,
+            'ng-minlength="1" required rows="1"></textarea></div>' +
+            '     <button type="submit"' +
+            '     class="btn btn-primary btn-sm">update</button>' +
+            '  <button ng-click="cancel()" class="btn btn-primary btn-sm ">cancel</button>' +
+            '</form></div>',
             scope: {
                 comment: '=',
                 callback: '=',
@@ -60,19 +61,19 @@ angular.module('Wall', [])
     .directive('postContent', function () {
         return {
             restrict: 'E',
-            template:  '<div class="col-md-12">'  +
-            '     <div class="row">'  +
-            '         <div class="text col-md-12">{{post.text}}</div>'  +
-            '         <div class="images col-md-12">'  +
-            '             <div class="row">'  +
-            '                 <div ng-repeat="image in post.images" class="col-xs-8 col-md-4">'  +
-            '                     <a class="thumbnail">'  +
-            '                         <img src="{{imageBasePath + image.path}}">'  +
-            '                     </a>'  +
-            '                 </div>'  +
-            '             </div>'  +
-            '         </div>'  +
-            '     </div>'  +
+            template: '<div class="col-md-12">' +
+            '     <div class="row">' +
+            '         <div class="text col-md-12">{{post.text}}</div>' +
+            '         <div class="images col-md-12">' +
+            '             <div class="row">' +
+            '                 <div ng-repeat="image in post.images" class="col-xs-8 col-md-4">' +
+            '                     <a class="thumbnail">' +
+            '                         <img src="{{imageBasePath + image.path}}">' +
+            '                     </a>' +
+            '                 </div>' +
+            '             </div>' +
+            '         </div>' +
+            '     </div>' +
             '</div>',
             scope: {
                 post: '=post',

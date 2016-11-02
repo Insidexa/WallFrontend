@@ -18,11 +18,12 @@
                 </div>
                 <div class="actions col-md-3">
                     <div ng-init="sizeIcon = 'fa-2x';" class="like">
-                        <i ng-click="wall.noInteresting(wallIndex)" ng-if="post.user.id == 1"
+                        <i ng-click="wall.noInteresting(wallIndex)" ng-if="post.user.id == wall.user.id"
                            class="btn-action fa fa-bullhorn fa-2x" aria-hidden="true"></i>
-                        <i ng-click="showEditWall = !showEditWall; wall.editWallForm(wallIndex)" ng-show="post.user.id == 1"
+                        <i ng-click="showEditWall = !showEditWall; wall.editWallForm(wallIndex)"
+                           ng-show="post.user.id == wall.user.id"
                            class="btn-action fa fa-edit fa-2x" aria-hidden="true"></i>
-                        <i ng-click="wall.remove(wallIndex)" ng-if="post.user.id == 1"
+                        <i ng-click="wall.remove(wallIndex)" ng-if="post.user.id == wall.user.id"
                            class="btn-action fa fa-remove fa-2x" aria-hidden="true"></i>
                         <i ng-click="wall.like(post.id, 'wall')"
                            ng-if="sizeIcon = post.is_liked == true ? 'fa-3x' : 'fa-2x'"
@@ -43,14 +44,15 @@
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-9">
-                                    <h4>{{comment.text}}</h4>
+                                    <edit-comment comment-show="showActionsComment" callback="wall.updateComment" comment="comment"></edit-comment>
+                                    <h4 ng-hide="showActionsComment">{{comment.text}}</h4>
                                     <p ng-if="comment.time">edited {{comment.time}}</p></div>
                                 <div class="actions col-md-3">
                                     <div class="like">
                                         <i ng-click="showFormAddComment = true; wall.reply(1)" class="fa fa-reply fa-1x"></i>
-                                        <i ng-click="showActionsComment = !showActionsComment; wall.editCommentForm(wallIndex, indexComment)"
+                                        <i ng-show="comment.user.id == wall.user.id" ng-click="showActionsComment = !showActionsComment; wall.editCommentForm(wallIndex, indexComment)"
                                            class="btn-action fa fa-edit fa-1x" aria-hidden="true"></i>
-                                        <i ng-click="wall.removeComment(wallIndex, indexComment)"
+                                        <i ng-show="comment.user.id == wall.user.id" ng-click="wall.removeComment(wallIndex, indexComment)"
                                            class="btn-action fa fa-remove fa-1x" aria-hidden="true"></i>
                                         <i ng-click="wall.like(comment.id, 'comment', post.id)"
                                            ng-if="sizeIcon = comment.is_liked == true ? 'fa-2x' : 'fa-1x'"
@@ -59,7 +61,6 @@
                                 </div>
                             </div>
                         </div>
-                        <edit-comment comment-show="showActionsComment" callback="wall.updateComment" comment="comment"></edit-comment>
                     </div>
                 </div>
                 <div class="col-md-12">
