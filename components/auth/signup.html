@@ -1,15 +1,15 @@
 <form ng-submit="sign.signup()" name="signup" novalidate="novalidate">
     <div class="form-group">
-        <label for="exampleInputName">Name</label>
-        <input ng-model="sign.user.name" ng-minlength="3" required type="text" class="form-control" id="exampleInputName" placeholder="Name">
+        <label for="exampleInputName">Имя</label>
+        <input ng-model="sign.user.name" ng-minlength="3" required type="text" class="form-control" id="exampleInputName" placeholder="Имя">
     </div>
     <div class="form-group">
-        <label for="exampleInputEmail">Email address</label>
+        <label for="exampleInputEmail">Email</label>
         <input ng-model="sign.user.email" required type="email" class="form-control" id="exampleInputEmail" placeholder="Email">
     </div>
     <div class="form-group">
-        <label for="exampleInputPassword">Password</label>
-        <input ng-model="sign.user.password" ng-minlength="6" required type="password" class="form-control" id="exampleInputPassword" placeholder="Password">
+        <label for="exampleInputPassword">Пароль</label>
+        <input ng-model="sign.user.password" ng-minlength="6" required type="password" class="form-control" id="exampleInputPassword" placeholder="****">
     </div>
-    <button type="submit" class="btn btn-default">Submit</button> or <a ng-href="#/signin">Login</a>
+    <button type="submit" class="btn btn-default">Регистрация</button> или <a ng-href="#/signin">войти</a>
 </form>

@@ -1,7 +1,7 @@
 <div class="row wall-form">
     <form ng-submit="wall.update(); showEditWall = false" name="editWall" novalidate="novalidate">
         <div class="form-group col-md-12">
-            <textarea ng-model="wall.editWall.text" placeholder="Enter text"
+            <textarea ng-model="wall.editWall.text" placeholder="Введите текст"
                       ng-minlength="1" required
                       class="form-control" rows="3"></textarea>
         </div>
@@ -17,7 +17,7 @@
                             <img ng-if="image.image" ng-src="{{image.image}}">
                         </div>
                         <div class="btn-group">
-                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index, 'editWall')">Remove</a>
+                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index, 'editWall')">Удалить</a>
                         </div>
                         <div class="clear"></div>
                     </div>
@@ -27,10 +27,10 @@
         <div class="col-md-12">
             <div class="row">
                 <div class="col-md-8 col-xs-8">
-                    <button type="submit" class="btn btn-primary btn-sm btn-block">Update post</button>
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">Обновить</button>
                 </div>
                 <div class="col-md-4 col-xs-4">
-                    <button ng-click="showEditWall = false" type="button" class="btn btn-danger btn-sm btn-block">cancel</button>
+                    <button ng-click="showEditWall = false" type="button" class="btn btn-danger btn-sm btn-block">отмена</button>
                 </div>
             </div>
         </div>

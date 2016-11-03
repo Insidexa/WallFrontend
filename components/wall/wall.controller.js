@@ -200,7 +200,7 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
         WallService.addComment({
             comment: {
                 text: text,
-                parent_id: 0
+                parent_id: (vm.comment) ? vm.comment.parent_id : 0
             },
             wall_id: id
         });

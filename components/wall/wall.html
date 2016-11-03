@@ -20,13 +20,14 @@
                 </div>
                 <div class="col-md-3 col-xs-3">
                     <div ng-init="sizeIcon = 'fa-2x';" class="like">
-                        <i ng-click="wall.noInteresting(wallIndex)" ng-if="post.user.id == wall.user.id"
+                        <i ng-click="wall.noInteresting(wallIndex)"
                            class="btn-action fa fa-bullhorn fa-2x" aria-hidden="true"></i>
-                        <i ng-click="showEditWall = !showEditWall; wall.editWallForm(wallIndex)"
-                           ng-show="post.user.id == wall.user.id"
-                           class="btn-action fa fa-edit fa-2x" aria-hidden="true"></i>
-                        <i ng-click="wall.remove(wallIndex)" ng-if="post.user.id == wall.user.id"
-                           class="btn-action fa fa-remove fa-2x" aria-hidden="true"></i>
+                        <span ng-show="post.user.id == wall.user.id">
+                            <i ng-click="showEditWall = !showEditWall; wall.editWallForm(wallIndex)"
+                               class="btn-action fa fa-edit fa-2x" aria-hidden="true"></i>
+                            <i ng-click="wall.remove(wallIndex)"
+                               class="btn-action fa fa-remove fa-2x" aria-hidden="true"></i>
+                        </span>
                         <i ng-click="wall.like(post.id, 'wall')"
                            ng-if="sizeIcon = post.is_liked == true ? 'fa-3x' : 'fa-2x'"
                            class="btn-action fa fa-heart " ng-class="sizeIcon" aria-hidden="true"></i>{{post.likes}}
@@ -39,23 +40,28 @@
         <div class="col-md-12">
             <div class="row">
                 <div ng-repeat="comment in post.comments track by $index"
-                     ng-init="indexComment = $index; showFormAddComment = false"
+                     ng-init="indexComment = $index; showFormAddComment = false; showFormReply = false"
                      class="comment col-md-offset-1 col-md-11">
                     <div ng-init="showActionsComment = false" class="row">
                         <div class="col-md-12">{{comment.user.name}}</div>
                         <div class="col-md-12">
                             <div class="row">
                                 <div class="col-md-9 col-xs-9">
-                                    <edit-comment comment-show="showActionsComment" callback="wall.updateComment" comment="comment"></edit-comment>
+                                    <edit-comment comment-show="showActionsComment" callback="wall.updateComment"
+                                                  comment="comment"></edit-comment>
                                     <h4 class="comment-text" ng-hide="showActionsComment">{{comment.text}}</h4>
-                                    <p ng-if="comment.time">edited {{comment.time}}</p></div>
+                                    <p ng-if="comment.time">отредактировано {{comment.time}}</p>
+                                </div>
                                 <div class="actions col-md-3 col-xs-3">
                                     <div class="like">
-                                        <i ng-click="showFormAddComment = true; wall.reply(1)" class="fa fa-reply fa-1x"></i>
-                                        <i ng-show="comment.user.id == wall.user.id" ng-click="showActionsComment = !showActionsComment; wall.editCommentForm(wallIndex, indexComment)"
-                                           class="btn-action fa fa-edit fa-1x" aria-hidden="true"></i>
-                                        <i ng-show="comment.user.id == wall.user.id" ng-click="wall.removeComment(wallIndex, indexComment)"
-                                           class="btn-action fa fa-remove fa-1x" aria-hidden="true"></i>
+                                        <i ng-click="showFormReply = !showFormReply; wall.reply(comment.id)"
+                                           class="fa fa-reply fa-1x"></i>
+                                        <span ng-show="comment.user.id == wall.user.id">
+                                            <i ng-click="showActionsComment = !showActionsComment; wall.editCommentForm(wallIndex, indexComment)"
+                                               class="btn-action fa fa-edit fa-1x" aria-hidden="true"></i>
+                                            <i ng-click="wall.removeComment(wallIndex, indexComment)"
+                                               class="btn-action fa fa-remove fa-1x" aria-hidden="true"></i>
+                                        </span>
                                         <i ng-click="wall.like(comment.id, 'comment', post.id)"
                                            ng-if="sizeIcon = comment.is_liked == true ? 'fa-2x' : 'fa-1x'"
                                            class="btn-action fa fa-heart " ng-class="sizeIcon" aria-hidden="true"></i>{{comment.likes}}
@@ -64,22 +70,17 @@
                             </div>
                         </div>
                     </div>
+                    <add-comment callback="wall.addComment" post-id="post.id" show-form="showFormReply"></add-comment>
                 </div>
+
                 <div class="col-md-12">
                     <button ng-click="showFormAddComment = !showFormAddComment" type="button"
-                            class="btn btn-default btn-sm btn-block">add comment</button>
+                            class="btn btn-default btn-sm btn-block">Добавить комментарий
+                    </button>
                 </div>
-                <div ng-show="showFormAddComment" class="add-comment col-md-offset-1 col-md-11">
-                    <form ng-submit="showFormAddComment = !showFormAddComment; wall.addComment(post.id, text); text = ''; "
-                        name="addComment" novalidate="novalidate">
-                        <div class="form-group">
-                            <textarea ng-minlength="1" required ng-model="text"
-                                      class="form-control" rows="1"></textarea>
-                        </div>
-                        <button type="submit"
-                                class="btn btn-primary btn-sm btn-block">add</button>
-                    </form>
-                </div>
+
+                <add-comment callback="wall.addComment" post-id="post.id" show-form="showFormAddComment"></add-comment>
+
             </div>
         </div>
     </div>

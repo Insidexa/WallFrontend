@@ -1,7 +1,7 @@
 <div class="row wall-form">
     <form ng-submit="wall.add();" name="wallAdd" novalidate="novalidate" >
         <div class="form-group col-md-12">
-            <textarea ng-model="wall.wall.text" placeholder="Enter text"
+            <textarea ng-model="wall.wall.text" placeholder="Введите текст"
                       ng-minlength="1"
                       required
                       class="form-control" rows="3">
@@ -18,7 +18,7 @@
                             <img ng-src="{{image.image}}">
                         </div>
                         <div class="btn-group">
-                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index, 'wall')">Remove</a>
+                            <a class="btn btn-xs btn-danger" ng-click="wall.removeImage($index, 'wall')">Удалить</a>
                         </div>
                         <div class="clear"></div>
                     </div>
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="col-md-12">
-            <button type="submit" class="btn btn-primary btn-sm btn-block">Add post</button>
+            <button type="submit" class="btn btn-primary btn-sm btn-block">Опубликовать</button>
         </div>
     </form>
 </div>

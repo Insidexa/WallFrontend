@@ -40,8 +40,8 @@ angular.module('Wall', [])
             '<div class="form-group"><textarea ng-model="editComment.text" class="form-control" ' +
             'ng-minlength="1" required rows="1"></textarea></div>' +
             '     <button type="submit"' +
-            '     class="btn btn-primary btn-sm">update</button>' +
-            '  <button ng-click="cancel()" class="btn btn-primary btn-sm ">cancel</button>' +
+            '     class="btn btn-primary btn-sm">Обновить</button>' +
+            '  <button ng-click="cancel()" class="btn btn-primary btn-sm ">отмена</button>' +
             '</form></div>',
             scope: {
                 comment: '=',
@@ -62,6 +62,36 @@ angular.module('Wall', [])
                 function update() {
                     $scope.commentShow = false;
                     $scope.callback($scope.editComment);
+                }
+            }]
+        }
+    })
+    .directive('addComment', function () {
+        return {
+            restrict: 'E',
+            replace: true,
+            template:  '   <div ng-show="showForm" class="add-comment col-md-offset-1 col-md-11">  '  +
+            '                       <form ng-submit="showForm = !showForm; add(postId, text); text = \'\'; "  '  +
+                '                             name="addComment" novalidate="novalidate">  '  +
+            '                           <div class="form-group">  '  +
+            '                               <textarea ng-minlength="1" required ng-model="text"  '  +
+            '                                         class="form-control" rows="1"></textarea>  '  +
+            '                           </div>  '  +
+            '                           <button type="submit"  '  +
+            '                                   class="btn btn-primary btn-sm btn-block">Добавить  '  +
+            '                           </button>  '  +
+            '                       </form>  '  +
+            '                  </div>  ',
+            scope: {
+                callback: '=callback',
+                showForm: '=showForm',
+                postId: '=postId'
+            },
+            controller: ['$scope', function ($scope) {
+                $scope.add = add;
+                
+                function add(postId, text) {
+                    $scope.callback(postId, text);
                 }
             }]
         }
