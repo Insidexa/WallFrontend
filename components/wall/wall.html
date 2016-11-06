@@ -41,7 +41,8 @@
             <div class="row">
                 <div ng-repeat="comment in post.comments track by $index"
                      ng-init="indexComment = $index; showFormAddComment = false; showFormReply = false"
-                     class="comment col-md-offset-1 col-md-11">
+                     class="comment col-md-offset-1 col-md-11"
+                    style="{{wall.getStyle(comment.depth)}}">
                     <div ng-init="showActionsComment = false" class="row">
                         <div class="col-md-12">{{comment.user.name}}</div>
                         <div class="col-md-12">

@@ -25,6 +25,12 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
     vm.editCommentForm = editCommentForm;
     vm.removeComment = removeComment;
     vm.updateComment = updateComment;
+    
+    vm.getStyle =  getStyle;
+    
+    function getStyle(level) {
+        return 'margin-left: ' + level + '0px !important';
+    }
 
     $interval(function () {
         angular.forEach(vm.walls, function (wall) {
@@ -126,20 +132,29 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
                 });
             },
             'client_add_comment': function (response) {
-                angular.forEach(vm.walls, function (wall) {
+                angular.forEach(vm.walls, function (wall, index) {
                     if (response.wall_id == wall.id) {
-                        wall.comments.push(response);
+                        if (response.parent_id) {
+                            vm.walls[index].comments.forEach(function (comment, commentIndex) {
+                                if (comment.id === response.parent_id) {
+                                    vm.walls[index].comments.insert(commentIndex + 1, response);
+                                }
+                            });
+                        } else {
+                            vm.walls[index].comments.push(response);
+                        }
                     }
                 })
             },
             'client_remove_comment': function (response) {
                 angular.forEach(vm.walls, function (wall, wallIndex) {
                     if (response.wall_id == wall.id) {
-                        angular.forEach(wall.comments, function (comment, commentIndex) {
-                            if (comment.id == response.comment_id) {
-                                vm.walls[wallIndex].comments.splice(commentIndex, 1);
+                        for(var i = wall.comments.length - 1; i >= 0; i--) {
+                            var comment = wall.comments[i];
+                            if(response.comment_ids.includes(comment.id)) {
+                                vm.walls[wallIndex].comments.splice(i, 1);
                             }
-                        });
+                        }
                     }
                 });
             },
@@ -200,7 +215,7 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
         WallService.addComment({
             comment: {
                 text: text,
-                parent_id: (vm.comment) ? vm.comment.parent_id : 0
+                parent_id: (vm.comment) ? vm.comment.parent_id : null
             },
             wall_id: id
         });
