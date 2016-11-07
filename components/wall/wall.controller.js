@@ -219,6 +219,7 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
             },
             wall_id: id
         });
+        vm.comment = null;
     }
 
     function update() {
