@@ -47,6 +47,7 @@ angular.module('App', [
 
         return factory;
     })
+    .factory('wallHttpInterceptor', WallHttpInterceptor)
     .directive('uploadImage', function () {
         return {
             restrict: 'E',
@@ -79,9 +80,37 @@ angular.module('App', [
         }
     });
 
+WallHttpInterceptor.$inject = ['$q'];
+function WallHttpInterceptor($q) {
+    return {
+        responseError: function(response) {
+
+            switch (response.status) {
+                case 400:
+                        var messages = '';
+                        angular.forEach(response.data.errors, function (errors) {
+                            angular.forEach(errors, function (error) {
+                                messages += error + '<br>';
+                            });
+                        });
+                    
+                    alert(messages);
+                    break;
+                
+                case 500:
+                    alert('Server unavailable');
+                    break;
+            }
+            
+            return $q.reject(response);
+        }
+    }
+}
+
 ConfigApp.$inject = ['$routeProvider', '$httpProvider'];
 function ConfigApp($routeProvider, $httpProvider) {
 
+    $httpProvider.interceptors.push('wallHttpInterceptor');
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.withCredentials = true;
     delete $httpProvider.defaults.headers.common["X-Requested-With"];
