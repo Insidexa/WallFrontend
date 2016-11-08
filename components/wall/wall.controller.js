@@ -175,7 +175,7 @@ function WallController($timeout, orderByFilter, $interval, WallService, AuthSer
             }
         };
 
-        var conn = new ab.Session('ws://localhost:8080',
+        var conn = new ab.Session('ws://185.14.187.188:8080',
             function () {
                 conn.subscribe('wall', function (topic, data) {
                     var object = {};

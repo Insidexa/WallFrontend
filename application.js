@@ -1,4 +1,4 @@
-SERVER_URL = 'http://localhost:8000/';
+SERVER_URL = 'http://185.14.187.188/';
 API_URL = SERVER_URL + 'api';
 ROOT_PATH = '/wall';
 MAX_COUNT_IMAGES = 5;
